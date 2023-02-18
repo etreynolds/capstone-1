@@ -1,8 +1,8 @@
-# Capstone I Proposal -- Media Memoir
+# Capstone I Proposal &rarr; Media Memoir
 
 ## Overview
 
-The *Media Memoir* is an application that will allow users to register, login, keep a log of movies and tv shows they watch, see information about the movies and tv shows they watch, and view watch summaries and statistics. The [TMDB API](https://www.themoviedb.org/documentation/api) provides access to a wealth of information and data points on movies and tv shows that will be utilited.
+The **_Media Memoir_** is an application that will allow users to register, login, keep a log of movies and tv shows they watch, see information about the movies and tv shows they watch, and view watch summaries and statistics. The [TMDB API](https://www.themoviedb.org/documentation/api) provides access to a wealth of information and data points on movies and tv shows that will be utilited.
 
 ## Goals
 
@@ -21,3 +21,23 @@ I plan on using the [TMDB API](https://www.themoviedb.org/documentation/api) and
 ### DB Schema
 
 ![DB Schema](db-schema.png "DB Schema")
+
+### Issues
+
+API could pull incorrect movie/show information if duplciate names of movies/shows exist.
+
+### Sensitive Information
+
+User login passwords
+
+### Functionality
+
+Log user entries of movies and tv episodes watched
+Offer summary page showing number of movies/tv episodes watched
+Display specific info of watched movies/tv episodes (titles, genres, release dates, runtimes, etc.)
+
+### User Flow
+
+### Beyond CRUD
+
+### Stretch Goals
