@@ -2,7 +2,7 @@
 
 ## Overview
 
-<font size="4">**_Media Memoir_**</font> is an application that will allow users to register, login, keep a log of movies and tv shows they watch, see information about the movies and tv shows they watch, and view watch summaries and statistics. The [TMDB API](https://www.themoviedb.org/documentation/api) provides access to a wealth of information and data points on movies and tv shows that will be utilited.
+<font size="4">**_Media Memoir_**</font> is an application that will allow users to register, login, keep a log of movies and tv shows they watch, see information about the movies and tv shows they watch, and view watch summaries and statistics. The [TMDB API](https://www.themoviedb.org/documentation/api) provides access to a wealth of information and data points on movies and tv shows that will be utilized.
 
 ## Goals
 
