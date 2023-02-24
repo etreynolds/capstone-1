@@ -15,3 +15,10 @@ connect_db(app)
 db.create_all()
 
 debug = DebugToolbarExtension(app)
+
+
+@app.route("/")
+def homepage():
+    """Homepage."""
+
+    return render_template('home.html')
