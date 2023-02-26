@@ -26,7 +26,11 @@ debug = DebugToolbarExtension(app)
 def homepage():
     """Homepage."""
 
-    return render_template('home.html')
+    if g.user:
+        return render_template('home.html')
+
+    else:
+        return redirect('/signup')
 
 ##############################################################################
 # User signup/login/logout
@@ -69,9 +73,9 @@ def signup():
     if form.validate_on_submit():
         try:
             user = User.signup(
+                email=form.email.data,
                 username=form.username.data,
-                password=form.password.data,
-                email=form.email.data
+                password=form.password.data
             )
             db.session.commit()
 
@@ -97,7 +101,7 @@ def login():
         user = User.authenticate(form.username.data, form.password.data)
 
         if user:
-            do_login()
+            do_login(user)
             flash(f"Hello, {user.username}!", "success")
             return redirect("/")
 
