@@ -1,4 +1,5 @@
-from flask import Flask, redirect, render_template, flash, session, g
+from flask import Flask, redirect, render_template, flash, session, g, request
+import requests
 from flask_debugtoolbar import DebugToolbarExtension
 from api import API_SECRET_KEY
 from sqlalchemy.exc import IntegrityError
@@ -8,12 +9,14 @@ from forms import UserAddForm, LoginForm
 
 CURR_USER_KEY = "curr_user"
 
+API_BASE_URL = "https://api.themoviedb.org/3"
+
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///media-memoir'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-app.config['SECRET_KEY'] = "keep it secret"
+app.config['SECRET_KEY'] = "keepitsecret"
 
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
@@ -119,3 +122,47 @@ def logout():
 
     flash("You have logged out.", "success")
     return redirect("/login")
+
+
+##############################################################################
+# API routes
+
+
+def request_movie(movie):
+    """Return movie info from API."""
+
+    res = requests.get(f"{API_BASE_URL}/movie",
+                       params={'api_key': API_SECRET_KEY,
+                               'query': movie})
+
+    data = res.json()
+
+    for result in data['results']:
+        print(result['original_title'])
+        print(result['release_date'])
+
+    # print(data['results'][0])
+
+
+@app.route("/movie")
+def get_movie_info():
+    """Return page about movie."""
+
+    movie = request.args["movie"]
+
+    res = requests.get(f"{API_BASE_URL}/search/movie",
+                       params={'api_key': API_SECRET_KEY,
+                               'query': movie})
+
+    data = res.json()
+    title = data["results"][0]['title']
+    id = data["results"][0]['id']
+    release_date = data["results"][0]['release_date']
+    user_score = data["results"][0]['vote_average']
+    poster_path = data["results"][0]['poster_path']
+    poster_url = f"https://image.tmdb.org/t/p/w300{poster_path}"
+
+    movie_info = {"title": title,
+                  "release_date": release_date, "poster_url": poster_url, "user_score": user_score}
+
+    return render_template('home.html', movie_info=movie_info)

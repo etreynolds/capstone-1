@@ -2,4 +2,26 @@
 
 {% block content %}
 
+
+
+<div class="row">
+    <div class="mx-auto col-10 col-md-8 col-lg-6">
+        <h1 class="mt-4">Search for a movie!</h1>
+        <form action="/movie">
+            <div class="form-group mt-4">
+                <input class="form-control" type="text" name="movie" placeholder="Search" id="search">
+                <button type="submit" class="btn btn-outline-primary btn-sm mt-2">Submit</button>
+            </div>
+        </form>
+
+
+        {% if movie_info %}
+        <h3>Title: {{movie_info['title']}}</h3>
+        <h4>Release Date: {{movie_info['release_date']}}</h4>
+        <h4>User Score: {{movie_info['user_score']}}</h4>
+        <img src="{{movie_info['poster_url']}}" alt="">
+        {% endif %}
+    </div>
+</div>
+
 {% endblock %}
