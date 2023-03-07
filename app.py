@@ -3,9 +3,9 @@ import requests
 from flask_debugtoolbar import DebugToolbarExtension
 from api import API_SECRET_KEY
 from sqlalchemy.exc import IntegrityError
-
 from models import db, connect_db, User
 from forms import UserAddForm, LoginForm
+from datetime import datetime
 
 CURR_USER_KEY = "curr_user"
 
@@ -24,6 +24,11 @@ connect_db(app)
 db.create_all()
 
 debug = DebugToolbarExtension(app)
+
+
+@app.template_filter('datetimeformat')
+def datetimeformat(value, format='%B'):
+    return value.strftime(format)
 
 
 @app.route("/")
@@ -157,7 +162,8 @@ def get_movie_info():
     data = res.json()
     title = data["results"][0]['title']
     id = data["results"][0]['id']
-    release_date = data["results"][0]['release_date']
+    release_date = datetime_obj = datetime.strptime(
+        (data["results"][0]['release_date']), '%Y-%m-%d')
     user_score = data["results"][0]['vote_average']
     poster_path = data["results"][0]['poster_path']
     poster_url = f"https://image.tmdb.org/t/p/w300{poster_path}"
@@ -166,3 +172,28 @@ def get_movie_info():
                   "release_date": release_date, "poster_url": poster_url, "user_score": user_score}
 
     return render_template('home.html', movie_info=movie_info)
+
+
+@app.route("/show")
+def get_show_info():
+    """Return page about show."""
+
+    show = request.args["show"]
+
+    res = requests.get(f"{API_BASE_URL}/search/tv",
+                       params={'api_key': API_SECRET_KEY,
+                               'query': show})
+
+    data = res.json()
+    title = data["results"][0]['name']
+    id = data["results"][0]['id']
+    first_air_date = datetime_obj = datetime.strptime(
+        (data["results"][0]['first_air_date']), '%Y-%m-%d')
+    user_score = data["results"][0]['vote_average']
+    poster_path = data["results"][0]['poster_path']
+    poster_url = f"https://image.tmdb.org/t/p/w300{poster_path}"
+
+    show_info = {"title": title,
+                 "first_air_date": first_air_date, "poster_url": poster_url, "user_score": user_score}
+
+    return render_template('home.html', show_info=show_info)
