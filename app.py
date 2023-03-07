@@ -3,8 +3,8 @@ import requests
 from flask_debugtoolbar import DebugToolbarExtension
 from api import API_SECRET_KEY
 from sqlalchemy.exc import IntegrityError
-from models import db, connect_db, User
-from forms import UserAddForm, LoginForm
+from models import db, connect_db, User, Entry
+from forms import UserAddForm, LoginForm, LogActivityForm
 from datetime import datetime
 
 CURR_USER_KEY = "curr_user"
@@ -133,22 +133,6 @@ def logout():
 # API routes
 
 
-def request_movie(movie):
-    """Return movie info from API."""
-
-    res = requests.get(f"{API_BASE_URL}/movie",
-                       params={'api_key': API_SECRET_KEY,
-                               'query': movie})
-
-    data = res.json()
-
-    for result in data['results']:
-        print(result['original_title'])
-        print(result['release_date'])
-
-    # print(data['results'][0])
-
-
 @app.route("/movie")
 def get_movie_info():
     """Return page about movie."""
@@ -197,3 +181,46 @@ def get_show_info():
                  "first_air_date": first_air_date, "poster_url": poster_url, "user_score": user_score}
 
     return render_template('home.html', show_info=show_info)
+
+
+##############################################################################
+# Entries routes
+
+@app.route("/log-activity", methods=["GET", "POST"])
+def log_activity():
+    """Show form to log activity."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    form = LogActivityForm()
+
+    if form.validate_on_submit():
+        media_type = request.form['media_type']
+        media_name = request.form['media_name']
+        date = request.form['date']
+        movie_theater = request.form['movie_theater']
+        movie_with_people = request.form['movie_with_people']
+        movie_new = request.form['movie_new']
+        tv_episodes = request.form['tv_episodes']
+
+        entry = Entry(media_type, media_name, date, movie_theater,
+                      movie_with_people, movie_new, tv_episodes)
+
+        db.session.add(entry)
+        db.session.commit()
+
+        message = f"Entry has been submitted."
+
+        return redirect("/", message=message)
+
+    else:
+        return render_template('log-activity.html', form=form)
+
+
+@app.route("/summary")
+def show_summary():
+    """Show summary of user's entries."""
+
+    return render_template('summary.html')

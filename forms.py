@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField
-from wtforms.validators import DataRequired, Email, Length
+from wtforms import StringField, PasswordField, DateField, SelectField, BooleanField, IntegerField
+from wtforms.validators import DataRequired, Email, Length, NumberRange
 
 
 class UserAddForm(FlaskForm):
@@ -21,4 +21,12 @@ class LoginForm(FlaskForm):
 class LogActivityForm(FlaskForm):
     """Log activity form."""
 
-    movie = StringField('Movie', validators=[DataRequired()])
+    media_type = SelectField('Media Type', choices=[(
+        'movie', 'Movie'), ('tv', 'TV Show')], coerce=str)
+    media_name = StringField('Media Name', validators=[DataRequired()])
+    date = DateField('Date', format='%Y-%m-%d')
+    movie_theater = BooleanField('Watched movie in theater?', default=False)
+    movie_with_people = BooleanField(
+        'Watched movie with people?', default=False)
+    movie_new = BooleanField('First time watching this movie?', default=False)
+    tv_episodes = IntegerField('Number of episodes watched')

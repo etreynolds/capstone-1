@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-md-center">
+    <div class="col-md-7 col-lg-5 m-4">
+        <h2 class="join-message">Log an activity!</h2>
+        <form action="/log-activity" id="log-activity-form" method="POST">
+            {{ form.hidden_tag() }}
+
+            {% for field in form
+            if field.widget.input_type != 'hidden' %}
+            {% for error in field.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+
+            <p>
+                {{ field.label }}
+
+                {{ field }}
+
+                {% for error in field.errors %}
+                {{ error }}
+                {% endfor %}
+            </p>
+
+            {% endfor %}
+
+            <button type="submit" class="btn btn-outline-primary btn-sm mt-2">Submit</button>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}

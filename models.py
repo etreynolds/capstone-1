@@ -15,7 +15,7 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, nullable=False, unique=True)
 
-    entries = db.relationship('Entry')
+    # entries = db.relationship('Entry')
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
@@ -87,8 +87,23 @@ class Entry(db.Model):
     __tablename__ = "entries"
 
     id = db.Column(db.Integer, primary_key=True)
+    # user_id = db.Column(db.Integer, db.ForeignKey(
+    #     'users.id'), nullable=False)
+    media_type = db.Column(db.Text, nullable=False)
+    media_name = db.Column(db.Text, nullable=False)
     date = db.Column(db.Date, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        'users.id'), nullable=False)
+    movie_theater = db.Column(db.Text, default=False)
+    movie_with_people = db.Column(db.Text, default=False)
+    movie_new = db.Column(db.Text, default=False)
+    tv_episodes = db.Column(db.Integer)
 
-    user = db.relationship('User')
+    # user = db.relationship('User')
+
+    def __init__(self, date, media_type, media_name, movie_theater, movie_with_people, movie_new, tv_episodes):
+        self.date = date
+        self.media_type = media_type
+        self.media_name = media_name
+        self.movie_theater = movie_theater
+        self.movie_with_people = movie_with_people
+        self.movie_new = movie_new
+        self.tv_episodes = tv_episodes
