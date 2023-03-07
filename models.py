@@ -15,6 +15,8 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, nullable=False, unique=True)
 
+    entries = db.relationship('Entry')
+
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
 
@@ -55,3 +57,38 @@ def connect_db(app):
 
     db.app = app
     db.init_app(app)
+
+
+class Movie(db.Model):
+    """Movie model."""
+
+    __tablename__ = "movies"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.Text, nullable=False)
+    genre = db.Column(db.Text)
+    release_date = db.Column(db.Date)
+    runtime = db.Column(db.Integer)
+
+
+class TV(db.Model):
+    """TV show model."""
+
+    __tablename__ = "shows"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.Text, nullable=False)
+    genre = db.Column(db.Text)
+
+
+class Entry(db.Model):
+    """User log of movies and tv episodes watched."""
+
+    __tablename__ = "entries"
+
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        'users.id'), nullable=False)
+
+    user = db.relationship('User')
