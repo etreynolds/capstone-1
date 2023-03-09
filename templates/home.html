@@ -5,7 +5,7 @@
 
 
 <div class="row">
-    <div class="mx-auto col-10 col-md-8 col-lg-6">
+    <div class="mx-auto col-8 col-lg-8 col-lg-6">
         <h1 class="mt-4">Search for a movie!</h1>
         <form action="/movie">
             <div class="form-group mt-4">
@@ -16,10 +16,10 @@
 
 
         {% if movie_info %}
-        <h3>Title: {{movie_info['title']}}</h3>
-        <h4>Runtime: {{movie_info['formatted_runtime']}}</h4>
-        <h4>Release Date: {{movie_info['release_date']|datetimeformat('%B %d, %Y')}}</h4>
-        <h4>User Score: {{movie_info['user_score']}}</h4>
+        <h3>{{movie_info['title']}}</h3>
+        <h5>Runtime: {{movie_info['formatted_runtime']}}</h5>
+        <h5>Release Date: {{movie_info['release_date']|datetimeformat('%B %d, %Y')}}</h5>
+        <h5>User Score: {{movie_info['user_score']}}</h5>
         <img src="{{movie_info['poster_url']}}" alt="">
         {% endif %}
     </div>
@@ -28,7 +28,7 @@
 <hr>
 
 <div class="row">
-    <div class="mx-auto col-10 col-md-8 col-lg-6">
+    <div class="mx-auto col-8 col-lg-8 col-lg-6">
         <h1 class="mt-4">Search for a TV show!</h1>
         <form action="/show">
             <div class="form-group mt-4">
