@@ -66,7 +66,6 @@ class Movie(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
-    genre = db.Column(db.Text)
     release_date = db.Column(db.Date)
     runtime = db.Column(db.Integer)
 
@@ -78,7 +77,6 @@ class TV(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
-    genre = db.Column(db.Text)
 
 
 class Entry(db.Model):
@@ -92,18 +90,18 @@ class Entry(db.Model):
     media_type = db.Column(db.Text, nullable=False)
     media_name = db.Column(db.Text, nullable=False)
     date = db.Column(db.Date, nullable=False)
-    movie_theater = db.Column(db.Text, default=False)
-    movie_with_people = db.Column(db.Text, default=False)
-    movie_new = db.Column(db.Text, default=False)
-    tv_episodes = db.Column(db.Integer)
+    # movie_theater = db.Column(db.Text, default=False)
+    # movie_with_people = db.Column(db.Text, default=False)
+    # movie_new = db.Column(db.Text, default=False)
+    # tv_episodes = db.Column(db.Integer)
 
     # user = db.relationship('User')
 
-    def __init__(self, date, media_type, media_name, movie_theater, movie_with_people, movie_new, tv_episodes):
+    def __init__(self, media_type, media_name, date):
         self.date = date
         self.media_type = media_type
         self.media_name = media_name
-        self.movie_theater = movie_theater
-        self.movie_with_people = movie_with_people
-        self.movie_new = movie_new
-        self.tv_episodes = tv_episodes
+        # self.movie_theater = movie_theater
+        # self.movie_with_people = movie_with_people
+        # self.movie_new = movie_new
+        # self.tv_episodes = tv_episodes

@@ -133,27 +133,49 @@ def logout():
 # API routes
 
 
-@app.route("/movie")
+@app.route("/movie", methods=["GET", "POST"])
 def get_movie_info():
     """Return page about movie."""
 
     movie = request.args["movie"]
 
-    res = requests.get(f"{API_BASE_URL}/search/movie",
-                       params={'api_key': API_SECRET_KEY,
-                               'query': movie})
+    res1 = requests.get(f"{API_BASE_URL}/search/movie",
+                        params={'api_key': API_SECRET_KEY,
+                                'query': movie})
 
-    data = res.json()
-    title = data["results"][0]['title']
-    id = data["results"][0]['id']
+    data1 = res1.json()
+    movie_id = data1["results"][0]['id']
+    title = data1["results"][0]['title']
     release_date = datetime_obj = datetime.strptime(
-        (data["results"][0]['release_date']), '%Y-%m-%d')
-    user_score = data["results"][0]['vote_average']
-    poster_path = data["results"][0]['poster_path']
+        (data1["results"][0]['release_date']), '%Y-%m-%d')
+    user_score = data1["results"][0]['vote_average']
+    poster_path = data1["results"][0]['poster_path']
     poster_url = f"https://image.tmdb.org/t/p/w300{poster_path}"
 
+    res2 = requests.get(f"{API_BASE_URL}/movie/{movie_id}",
+                        params={'api_key': API_SECRET_KEY,
+                                'movie_id': movie_id})
+
+    data2 = res2.json()
+    runtime = data2['runtime']
+
+    # Function to convert runtime minutes into 'hour minutes'
+    # example: 129 minutes will show as '2h 9m'
+    def convert(min):
+        min = min % (24 * 1440)
+        hour = min // 1440
+        min %= 1440
+        hour = min // 60
+        min %= 60
+        return (f"{hour}h {min}m")
+
+    formatted_runtime = convert(runtime)
+
     movie_info = {"title": title,
-                  "release_date": release_date, "poster_url": poster_url, "user_score": user_score}
+                  "formatted_runtime": formatted_runtime,
+                  "release_date": release_date,
+                  "poster_url": poster_url,
+                  "user_score": user_score}
 
     return render_template('home.html', movie_info=movie_info)
 
@@ -170,7 +192,6 @@ def get_show_info():
 
     data = res.json()
     title = data["results"][0]['name']
-    id = data["results"][0]['id']
     first_air_date = datetime_obj = datetime.strptime(
         (data["results"][0]['first_air_date']), '%Y-%m-%d')
     user_score = data["results"][0]['vote_average']
@@ -178,7 +199,9 @@ def get_show_info():
     poster_url = f"https://image.tmdb.org/t/p/w300{poster_path}"
 
     show_info = {"title": title,
-                 "first_air_date": first_air_date, "poster_url": poster_url, "user_score": user_score}
+                 "first_air_date": first_air_date,
+                 "poster_url": poster_url,
+                 "user_score": user_score}
 
     return render_template('home.html', show_info=show_info)
 
@@ -200,20 +223,19 @@ def log_activity():
         media_type = request.form['media_type']
         media_name = request.form['media_name']
         date = request.form['date']
-        movie_theater = request.form['movie_theater']
-        movie_with_people = request.form['movie_with_people']
-        movie_new = request.form['movie_new']
-        tv_episodes = request.form['tv_episodes']
+        # movie_theater = request.form['movie_theater']
+        # movie_with_people = request.form['movie_with_people']
+        # movie_new = request.form['movie_new']
+        # tv_episodes = request.form['tv_episodes']
 
-        entry = Entry(media_type, media_name, date, movie_theater,
-                      movie_with_people, movie_new, tv_episodes)
+        entry = Entry(media_type, media_name, date)
 
         db.session.add(entry)
         db.session.commit()
 
-        message = f"Entry has been submitted."
+        flash("Entry has been submitted", "success")
 
-        return redirect("/", message=message)
+        return redirect("/log-activity")
 
     else:
         return render_template('log-activity.html', form=form)

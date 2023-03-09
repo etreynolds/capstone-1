@@ -17,6 +17,7 @@
 
         {% if movie_info %}
         <h3>Title: {{movie_info['title']}}</h3>
+        <h4>Runtime: {{movie_info['formatted_runtime']}}</h4>
         <h4>Release Date: {{movie_info['release_date']|datetimeformat('%B %d, %Y')}}</h4>
         <h4>User Score: {{movie_info['user_score']}}</h4>
         <img src="{{movie_info['poster_url']}}" alt="">

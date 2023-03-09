@@ -22,11 +22,11 @@ class LogActivityForm(FlaskForm):
     """Log activity form."""
 
     media_type = SelectField('Media Type', choices=[(
-        'movie', 'Movie'), ('tv', 'TV Show')], coerce=str)
+        'movie', 'Movie'), ('tv', 'TV Show')], coerce=str, default='movie')
     media_name = StringField('Media Name', validators=[DataRequired()])
-    date = DateField('Date', format='%Y-%m-%d')
-    movie_theater = BooleanField('Watched movie in theater?', default=False)
-    movie_with_people = BooleanField(
-        'Watched movie with people?', default=False)
-    movie_new = BooleanField('First time watching this movie?', default=False)
-    tv_episodes = IntegerField('Number of episodes watched')
+    date = DateField('Date (YYYY-M-D)', format='%Y-%m-%d')
+    # movie_theater = BooleanField('Watched movie in theater?', default=False)
+    # movie_with_people = BooleanField(
+    #     'Watched movie with people?', default=False)
+    # movie_new = BooleanField('First time watching this movie?', default=False)
+    # tv_episodes = IntegerField('Number of episodes watched')
