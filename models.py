@@ -64,10 +64,18 @@ class Movie(db.Model):
 
     __tablename__ = "movies"
 
-    id = db.Column(db.Integer, primary_key=True)
+    movie_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
     release_date = db.Column(db.Date)
     runtime = db.Column(db.Integer)
+    poster_path = db.Column(db.Text)
+
+    def __init__(self, movie_id, title, release_date, runtime, poster_path):
+        self.movie_id = movie_id
+        self.title = title
+        self.release_date = release_date
+        self.runtime = runtime
+        self.poster_path = poster_path
 
 
 class TV(db.Model):

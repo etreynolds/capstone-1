@@ -3,13 +3,15 @@ import requests
 from flask_debugtoolbar import DebugToolbarExtension
 from api import API_SECRET_KEY
 from sqlalchemy.exc import IntegrityError
-from models import db, connect_db, User, Entry
+from sqlalchemy.sql import exists
+from models import db, connect_db, User, Entry, Movie
 from forms import UserAddForm, LoginForm, LogActivityForm
 from datetime import datetime
 
 CURR_USER_KEY = "curr_user"
 
 API_BASE_URL = "https://api.themoviedb.org/3"
+API_POSTER_URL = "https://image.tmdb.org/t/p/w185"
 
 app = Flask(__name__)
 
@@ -150,7 +152,7 @@ def get_movie_info():
         (data1["results"][0]['release_date']), '%Y-%m-%d')
     user_score = data1["results"][0]['vote_average']
     poster_path = data1["results"][0]['poster_path']
-    poster_url = f"https://image.tmdb.org/t/p/w300{poster_path}"
+    poster_url = f"{API_POSTER_URL}{poster_path}"
 
     res2 = requests.get(f"{API_BASE_URL}/movie/{movie_id}",
                         params={'api_key': API_SECRET_KEY,
@@ -177,39 +179,63 @@ def get_movie_info():
                   "poster_url": poster_url,
                   "user_score": user_score}
 
+    # Check to see if movie exists in db. if not, add it.
+    exists = db.session.query(db.exists().where(
+        Movie.movie_id == movie_id)).scalar()
+
+    if exists:
+        print("******************")
+        print("Already in DB")
+        return render_template('home.html', movie_info=movie_info)
+
+    else:
+        movie_to_db = Movie(movie_id, title, release_date,
+                            runtime, poster_path)
+        db.session.add(movie_to_db)
+        db.session.commit()
+        print("********************")
+        print("Added to DB")
+
+    # Form to log 'watched movie' activity
+    # form = LogActivityForm()
+
+    # if form.validate_on_submit():
+    #     date = request.form['date']
+    #     entry = Entry(date)
+
     return render_template('home.html', movie_info=movie_info)
 
 
-@app.route("/show")
-def get_show_info():
-    """Return page about show."""
+# @app.route("/show")
+# def get_show_info():
+#     """Return page about show."""
 
-    show = request.args["show"]
+#     show = request.args["show"]
 
-    res = requests.get(f"{API_BASE_URL}/search/tv",
-                       params={'api_key': API_SECRET_KEY,
-                               'query': show})
+#     res = requests.get(f"{API_BASE_URL}/search/tv",
+#                        params={'api_key': API_SECRET_KEY,
+#                                'query': show})
 
-    data = res.json()
-    title = data["results"][0]['name']
-    first_air_date = datetime_obj = datetime.strptime(
-        (data["results"][0]['first_air_date']), '%Y-%m-%d')
-    user_score = data["results"][0]['vote_average']
-    poster_path = data["results"][0]['poster_path']
-    poster_url = f"https://image.tmdb.org/t/p/w300{poster_path}"
+#     data = res.json()
+#     title = data["results"][0]['name']
+#     first_air_date = datetime_obj = datetime.strptime(
+#         (data["results"][0]['first_air_date']), '%Y-%m-%d')
+#     user_score = data["results"][0]['vote_average']
+#     poster_path = data["results"][0]['poster_path']
+#     poster_url = f"{API_POSTER_URL}{poster_path}"
 
-    show_info = {"title": title,
-                 "first_air_date": first_air_date,
-                 "poster_url": poster_url,
-                 "user_score": user_score}
+#     show_info = {"title": title,
+#                  "first_air_date": first_air_date,
+#                  "poster_url": poster_url,
+#                  "user_score": user_score}
 
-    return render_template('home.html', show_info=show_info)
+#     return render_template('home.html', show_info=show_info)
 
 
 ##############################################################################
 # Entries routes
 
-@app.route("/log-activity", methods=["GET", "POST"])
+@ app.route("/log-activity", methods=["GET", "POST"])
 def log_activity():
     """Show form to log activity."""
 
@@ -220,7 +246,7 @@ def log_activity():
     form = LogActivityForm()
 
     if form.validate_on_submit():
-        media_type = request.form['media_type']
+        # media_type = request.form['media_type']
         media_name = request.form['media_name']
         date = request.form['date']
         # movie_theater = request.form['movie_theater']
@@ -228,7 +254,7 @@ def log_activity():
         # movie_new = request.form['movie_new']
         # tv_episodes = request.form['tv_episodes']
 
-        entry = Entry(media_type, media_name, date)
+        entry = Entry(media_name, date)
 
         db.session.add(entry)
         db.session.commit()
@@ -241,7 +267,7 @@ def log_activity():
         return render_template('log-activity.html', form=form)
 
 
-@app.route("/summary")
+@ app.route("/summary")
 def show_summary():
     """Show summary of user's entries."""
 
