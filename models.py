@@ -67,13 +67,15 @@ class Movie(db.Model):
     movie_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
     release_date = db.Column(db.Date)
+    genre = db.Column(db.Text)
     runtime = db.Column(db.Integer)
     poster_path = db.Column(db.Text)
 
-    def __init__(self, movie_id, title, release_date, runtime, poster_path):
+    def __init__(self, movie_id, title, release_date, genre, runtime, poster_path):
         self.movie_id = movie_id
         self.title = title
         self.release_date = release_date
+        self.genre = genre
         self.runtime = runtime
         self.poster_path = poster_path
 

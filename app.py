@@ -160,6 +160,7 @@ def get_movie_info():
 
     data2 = res2.json()
     runtime = data2['runtime']
+    genre = data2['genres'][0]['name']
 
     # Function to convert runtime minutes into 'hour minutes'
     # example: 129 minutes will show as '2h 9m'
@@ -176,6 +177,7 @@ def get_movie_info():
     movie_info = {"title": title,
                   "formatted_runtime": formatted_runtime,
                   "release_date": release_date,
+                  "genre": genre,
                   "poster_url": poster_url,
                   "user_score": user_score}
 
@@ -189,7 +191,7 @@ def get_movie_info():
         return render_template('home.html', movie_info=movie_info)
 
     else:
-        movie_to_db = Movie(movie_id, title, release_date,
+        movie_to_db = Movie(movie_id, title, release_date, genre,
                             runtime, poster_path)
         db.session.add(movie_to_db)
         db.session.commit()
