@@ -35,7 +35,7 @@
                         <a class="nav-link" href="/log-activity">Log</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/summary">Summary</a>
+                        <a class="nav-link" href="/user/{{ g.user.id }}/summary">Summary</a>
                     </li>
                 </ul>
             </div>
@@ -46,7 +46,7 @@
                 <li class="nav-item"><a class="nav-link" href="/login">Log in</a></li>
                 {% else %}
                 <li>
-                    <a class="nav-link" href="/users/{{ g.user.id }}">{{ g.user.username }}</a>
+                    <a class="nav-link" href="/users/{{ g.user.id }}">{{ g.user.name }}</a>
                 </li>
                 <a class="btn btn-outline-secondary" href="/logout">Log Out</a></li>
                 {% endif %}

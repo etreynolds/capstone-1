@@ -11,22 +11,24 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, nullable=False)
     username = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, nullable=False, unique=True)
 
-    # entries = db.relationship('Entry')
+    entries = db.relationship('Entry')
 
     def __repr__(self):
-        return f"<User #{self.id}: {self.username}, {self.email}>"
+        return f"<User #{self.id}: {self.name}, {self.username}, {self.email}>"
 
     @classmethod
-    def signup(cls, username, password, email):
+    def signup(cls, name, username, password, email):
         """Sign up user. Hashes password and adds user to system."""
 
         hashed_pw = bcrypt.generate_password_hash(password).decode('UTF-8')
 
-        user = User(username=username, email=email, password=hashed_pw)
+        user = User(name=name, username=username,
+                    email=email, password=hashed_pw)
 
         db.session.add(user)
         return user
@@ -80,38 +82,17 @@ class Movie(db.Model):
         self.poster_path = poster_path
 
 
-class TV(db.Model):
-    """TV show model."""
-
-    __tablename__ = "shows"
-
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.Text, nullable=False)
-
-
 class Entry(db.Model):
     """User log of movies and tv episodes watched."""
 
     __tablename__ = "entries"
 
     id = db.Column(db.Integer, primary_key=True)
-    # user_id = db.Column(db.Integer, db.ForeignKey(
-    #     'users.id'), nullable=False)
-    media_type = db.Column(db.Text, nullable=False)
-    media_name = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        'users.id'), nullable=False)
     date = db.Column(db.Date, nullable=False)
-    # movie_theater = db.Column(db.Text, default=False)
-    # movie_with_people = db.Column(db.Text, default=False)
-    # movie_new = db.Column(db.Text, default=False)
-    # tv_episodes = db.Column(db.Integer)
 
-    # user = db.relationship('User')
+    user = db.relationship('User')
 
-    def __init__(self, media_type, media_name, date):
-        self.date = date
-        self.media_type = media_type
-        self.media_name = media_name
-        # self.movie_theater = movie_theater
-        # self.movie_with_people = movie_with_people
-        # self.movie_new = movie_new
-        # self.tv_episodes = tv_episodes
+    # def __init__(self, date):
+    #     self.date = date

@@ -15,7 +15,7 @@ API_POSTER_URL = "https://image.tmdb.org/t/p/w185"
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///media-memoir'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///media_memoir'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = "keepitsecret"
@@ -84,6 +84,7 @@ def signup():
     if form.validate_on_submit():
         try:
             user = User.signup(
+                name=form.name.data,
                 email=form.email.data,
                 username=form.username.data,
                 password=form.password.data
@@ -181,6 +182,8 @@ def get_movie_info():
                   "poster_url": poster_url,
                   "user_score": user_score}
 
+    form = LogActivityForm()
+
     # Check to see if movie exists in db. if not, add it.
     exists = db.session.query(db.exists().where(
         Movie.movie_id == movie_id)).scalar()
@@ -188,7 +191,15 @@ def get_movie_info():
     if exists:
         print("******************")
         print("Already in DB")
-        return render_template('home.html', movie_info=movie_info)
+
+        if form.validate_on_submit():
+            date = form.date.data
+            entry = Entry(date=date)
+            db.session.add(entry)
+            db.session.commit()
+            return redirect('/')
+        else:
+            return render_template('home.html', movie_info=movie_info, form=form)
 
     else:
         movie_to_db = Movie(movie_id, title, release_date, genre,
@@ -198,14 +209,14 @@ def get_movie_info():
         print("********************")
         print("Added to DB")
 
-    # Form to log 'watched movie' activity
-    # form = LogActivityForm()
-
-    # if form.validate_on_submit():
-    #     date = request.form['date']
-    #     entry = Entry(date)
-
-    return render_template('home.html', movie_info=movie_info)
+        if form.validate_on_submit():
+            date = form.date.data
+            entry = Entry(date=date)
+            db.session.add(entry)
+            db.session.commit()
+            return redirect('/')
+        else:
+            return render_template('home.html', movie_info=movie_info, form=form)
 
 
 # @app.route("/show")
@@ -237,40 +248,39 @@ def get_movie_info():
 ##############################################################################
 # Entries routes
 
-@ app.route("/log-activity", methods=["GET", "POST"])
-def log_activity():
-    """Show form to log activity."""
+@app.route("/add-entry", methods=["GET", "POST"])
+def add_entry():
+    """Handle adding entries."""
+    if request.method == 'POST':
+        date = request.form['date']
+        entry = Entry(date=date)
+        db.session.add(entry)
+        db.session.commit()
+        return redirect("/")
+    else:
+        return render_template("home.html")
 
+
+@app.route("/summary")
+def show_user_summary():
+    """Show summary of user's entries."""
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    form = LogActivityForm()
+    # user = User.query.get_or_404(user_id)
 
-    if form.validate_on_submit():
-        # media_type = request.form['media_type']
-        media_name = request.form['media_name']
-        date = request.form['date']
-        # movie_theater = request.form['movie_theater']
-        # movie_with_people = request.form['movie_with_people']
-        # movie_new = request.form['movie_new']
-        # tv_episodes = request.form['tv_episodes']
+    users = User.query.all()
 
-        entry = Entry(media_name, date)
-
-        db.session.add(entry)
-        db.session.commit()
-
-        flash("Entry has been submitted", "success")
-
-        return redirect("/log-activity")
-
-    else:
-        return render_template('log-activity.html', form=form)
+    return render_template('summary.html', users=users)
 
 
-@ app.route("/summary")
-def show_summary():
-    """Show summary of user's entries."""
+@app.route("/user/<int:user_id>/summary")
+def show_user(user_id):
+    """Show details about user."""
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
 
-    return render_template('summary.html')
+    user = User.query.get_or_404(user_id)
+    return render_template('summary.html', user=user)

@@ -2,8 +2,6 @@
 
 {% block content %}
 
-
-
 <div class="container">
     <div class="row justify-content-md-center">
         <h1 class="mt-4">Search for a movie!</h1>
@@ -13,16 +11,36 @@
                 <button type="submit" class="btn btn-outline-primary btn-sm mt-2">Submit</button>
             </div>
         </form>
-        <div class="col-sm">
+        <div class="col text-center mt-4">
             {% if movie_info %}
+            <img src="{{movie_info['poster_url']}}" alt="" class="img-fluid">
+        </div>
+
+        <div class="col-6 mt-4">
             <h3>{{movie_info['title']}}</h3>
             <h5>Runtime: {{movie_info['formatted_runtime']}}</h5>
             <h5>Release Date: {{movie_info['release_date']|datetimeformat('%B %d, %Y')}}</h5>
             <h5>User Score: {{movie_info['user_score']}}</h5>
-            <img src="{{movie_info['poster_url']}}" alt="">
+
+            <form action="/add-entry">
+                {% for field in form if field.widget.input_type != 'hidden' %}
+
+                <h6>
+                    {{ field.label }}
+                    {{ field }}
+
+                    {% for error in field.errors %}
+                    {{ error }}
+                    {% endfor %}
+                </h6>
+
+                {% endfor %}
+                <button class="btn btn-outline-success btn-sm">Submit</button>
+            </form>
             {% endif %}
         </div>
-        <div class="col-sm">Log submission form goes here</div>
+
+        <div class="col-sm mt-4"></div>
 
     </div>
 </div>
