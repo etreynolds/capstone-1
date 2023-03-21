@@ -19,7 +19,7 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[Length(min=6)])
 
 
-class LogActivityForm(FlaskForm):
-    """Log activity form."""
+class AddEntryForm(FlaskForm):
+    """Add entry form."""
 
     date = DateField('Date Watched (YYYY-M-D)', format='%Y-%m-%d')

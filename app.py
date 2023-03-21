@@ -5,7 +5,7 @@ from api import API_SECRET_KEY
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import exists
 from models import db, connect_db, User, Entry, Movie
-from forms import UserAddForm, LoginForm, LogActivityForm
+from forms import UserAddForm, LoginForm, AddEntryForm
 from datetime import datetime
 
 CURR_USER_KEY = "curr_user"
@@ -182,7 +182,7 @@ def get_movie_info():
                   "poster_url": poster_url,
                   "user_score": user_score}
 
-    form = LogActivityForm()
+    form = AddEntryForm()
 
     # Check to see if movie exists in db. if not, add it.
     exists = db.session.query(db.exists().where(
@@ -259,7 +259,7 @@ def add_entry():
         return redirect("/")
 
     user = g.user
-    form = LogActivityForm()
+    form = AddEntryForm()
 
     if form.validate_on_submit():
         user_id = user.id
@@ -270,7 +270,7 @@ def add_entry():
         flash(f"Added movie entry for {date}", "success")
         return redirect("/add-entry")
 
-    return render_template('log-activity.html', form=form)
+    return render_template('add-entry.html', form=form)
 
 # @app.route("/add-entry", methods=["POST"])
 # def add_entry():
