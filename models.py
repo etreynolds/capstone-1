@@ -66,20 +66,24 @@ class Movie(db.Model):
 
     __tablename__ = "movies"
 
-    movie_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
     release_date = db.Column(db.Date)
     genre = db.Column(db.Text)
     runtime = db.Column(db.Integer)
     poster_path = db.Column(db.Text)
+    user_score = db.Column(db.Numeric)
 
-    def __init__(self, movie_id, title, release_date, genre, runtime, poster_path):
-        self.movie_id = movie_id
+    entries = db.relationship('Entry')
+
+    def __init__(self, id, title, release_date, genre, runtime, poster_path, user_score):
+        self.id = id
         self.title = title
         self.release_date = release_date
         self.genre = genre
         self.runtime = runtime
         self.poster_path = poster_path
+        self.user_score = user_score
 
 
 class Entry(db.Model):
@@ -90,9 +94,11 @@ class Entry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(
         'users.id'), nullable=False)
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'))
     date = db.Column(db.Date, nullable=False)
 
-    user = db.relationship('User')
+    users = db.relationship('User')
+    movies = db.relationship('Movie')
 
     # def __init__(self, date):
     #     self.date = date

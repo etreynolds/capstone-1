@@ -22,7 +22,7 @@
             <h5>Release Date: {{movie_info['release_date']|datetimeformat('%B %d, %Y')}}</h5>
             <h5>User Score: {{movie_info['user_score']}}</h5>
 
-            <form action="/add-entry">
+            <form action="/movie?movie=<movie_title>" method="POST">
                 {% for field in form if field.widget.input_type != 'hidden' %}
 
                 <h6>
@@ -46,27 +46,5 @@
 </div>
 
 <hr>
-
-<!-- <div class="row">
-    <div class="mx-auto col-8 col-lg-8 col-lg-6">
-        <h1 class="mt-4">Search for a TV show!</h1>
-        <form action="/show">
-            <div class="form-group mt-4">
-                <input class="form-control" type="text" name="show" placeholder="Search" id="search">
-                <button type="submit" class="btn btn-outline-primary btn-sm mt-2">Submit</button>
-            </div>
-        </form>
-
-
-        {% if show_info %}
-        <h3>{{show_info['title']}}</h3>
-        <h5>First Air Date: {{show_info['first_air_date']|datetimeformat('%B %d, %Y')}}</h5>
-        <h5>User Score: {{show_info['user_score']}}</h5>
-        <img src="{{show_info['poster_url']}}" alt="">
-        {% endif %}
-    </div>
-</div> -->
-
-<!-- <hr> -->
 
 {% endblock %}

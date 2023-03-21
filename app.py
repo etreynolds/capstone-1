@@ -147,7 +147,7 @@ def get_movie_info():
                                 'query': movie})
 
     data1 = res1.json()
-    movie_id = data1["results"][0]['id']
+    id = data1["results"][0]['id']
     title = data1["results"][0]['title']
     release_date = datetime_obj = datetime.strptime(
         (data1["results"][0]['release_date']), '%Y-%m-%d')
@@ -155,9 +155,9 @@ def get_movie_info():
     poster_path = data1["results"][0]['poster_path']
     poster_url = f"{API_POSTER_URL}{poster_path}"
 
-    res2 = requests.get(f"{API_BASE_URL}/movie/{movie_id}",
+    res2 = requests.get(f"{API_BASE_URL}/movie/{id}",
                         params={'api_key': API_SECRET_KEY,
-                                'movie_id': movie_id})
+                                'movie_id': id})
 
     data2 = res2.json()
     runtime = data2['runtime']
@@ -176,6 +176,7 @@ def get_movie_info():
     formatted_runtime = convert(runtime)
 
     movie_info = {"title": title,
+                  "id": id,
                   "formatted_runtime": formatted_runtime,
                   "release_date": release_date,
                   "genre": genre,
@@ -186,104 +187,85 @@ def get_movie_info():
 
     # Check to see if movie exists in db. if not, add it.
     exists = db.session.query(db.exists().where(
-        Movie.movie_id == movie_id)).scalar()
+        Movie.id == id)).scalar()
 
     if exists:
         print("******************")
         print("Already in DB")
-
-        if form.validate_on_submit():
-            date = form.date.data
-            entry = Entry(date=date)
-            db.session.add(entry)
-            db.session.commit()
-            flash("Entry logged.", "success")
-            return redirect('/')
-        else:
-            return render_template('home.html', movie_info=movie_info, form=form)
+        return render_template('home.html', movie_info=movie_info, form=form)
 
     else:
-        movie_to_db = Movie(movie_id, title, release_date, genre,
-                            runtime, poster_path)
+        movie_to_db = Movie(id, title, release_date, genre,
+                            runtime, poster_path, user_score)
         db.session.add(movie_to_db)
         db.session.commit()
         print("********************")
         print("Added to DB")
+        return render_template('home.html', movie_info=movie_info, form=form)
 
-        if form.validate_on_submit():
-            date = form.date.data
-            entry = Entry(date=date)
-            db.session.add(entry)
-            db.session.commit()
-            flash("Entry logged.", "success")
-            return redirect('/')
-        else:
-            return render_template('home.html', movie_info=movie_info, form=form)
+    # if form.validate_on_submit():
+    #     user_id = g.user.id
+    #     date = form.date.data
+    #     entry = Entry(date=date, user_id=user_id)
+    #     db.session.add(entry)
+    #     db.session.commit()
+    #     flash(f"Added movie entry for {date}", "success")
+    #     return redirect('/')
+    # else:
+    #     return render_template('home.html', movie_info=movie_info, form=form)
 
-
-# @app.route("/show")
-# def get_show_info():
-#     """Return page about show."""
-
-#     show = request.args["show"]
-
-#     res = requests.get(f"{API_BASE_URL}/search/tv",
-#                        params={'api_key': API_SECRET_KEY,
-#                                'query': show})
-
-#     data = res.json()
-#     title = data["results"][0]['name']
-#     first_air_date = datetime_obj = datetime.strptime(
-#         (data["results"][0]['first_air_date']), '%Y-%m-%d')
-#     user_score = data["results"][0]['vote_average']
-#     poster_path = data["results"][0]['poster_path']
-#     poster_url = f"{API_POSTER_URL}{poster_path}"
-
-#     show_info = {"title": title,
-#                  "first_air_date": first_air_date,
-#                  "poster_url": poster_url,
-#                  "user_score": user_score}
-
-#     return render_template('home.html', show_info=show_info)
+        # if form.validate_on_submit():
+        #     user_id = g.user.id
+        #     date = form.date.data
+        #     entry = Entry(date=date, user_id=user_id)
+        #     db.session.add(entry)
+        #     db.session.commit()
+        #     flash(f"Added movie entry for {date}", "success")
+        #     return redirect('/')
+        # else:
+        #     return render_template('home.html', movie_info=movie_info, form=form)
 
 
-##############################################################################
-# Entries routes
+@app.route("/movie?movie=<movie_title>", methods=["POST"])
+def add_movie_date(movie_title):
+    """Handle submitting entry with date."""
 
-@app.route("/add-entry", methods=["GET", "POST"])
-def add_entry():
-    """Add an entry. Show form if GET."""
-
-    if not g.user:
-        flash("Must be signed in!", "danger")
-        return redirect("/")
-
-    user = g.user
     form = AddEntryForm()
 
     if form.validate_on_submit():
-        user_id = user.id
+        user_id = g.user.id
         date = form.date.data
         entry = Entry(date=date, user_id=user_id)
         db.session.add(entry)
         db.session.commit()
         flash(f"Added movie entry for {date}", "success")
-        return redirect("/add-entry")
+        return redirect('/')
 
-    return render_template('add-entry.html', form=form)
-
-# @app.route("/add-entry", methods=["POST"])
+    else:
+        return render_template('home.html')
+##############################################################################
+# Entries routes
+# @app.route("/add-entry", methods=["GET", "POST"])
 # def add_entry():
-#     """Handle adding entries."""
-#     if request.method == 'POST':
-#         date = request.form['date']
-#         entry = Entry(date=date)
+#     """Add an entry. Show form if GET."""
+#     if not g.user:
+#         flash("Must be signed in!", "danger")
+#         return redirect("/")
+
+#     user = g.user
+#     form = AddEntryForm()
+#     if form.validate_on_submit():
+#         user_id = user.id
+#         date = form.date.data
+#         movie_id = form.movie_id.data
+#         entry = Entry(date=date, user_id=user_id, movie_id=movie_id)
 #         db.session.add(entry)
 #         db.session.commit()
-#         flash("Entry logged.", "success")
-#         return redirect("/")
-#     else:
-#         return render_template("home.html")
+#         flash(f"Added movie entry for {date}", "success")
+#         return redirect("/add-entry")
+#     return render_template('add-entry.html', form=form)
+
+
 ##############################################################################
 # Summary routes
 
