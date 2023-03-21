@@ -5,12 +5,12 @@
 <div class="row justify-content-md-center">
     <div class="col-md-7 col-lg-5 m-4">
         <h2 class="join-message">Log an activity!</h2>
-        <form action="/log-activity" id="log-activity-form" method="POST">
+        <form action="/add-entry" id="log-activity-form" method="POST">
             {{ form.hidden_tag() }}
 
             {% for field in form if field.widget.input_type != 'hidden' %}
             {% for error in field.errors %}
-            <span class="text-danger">{{ error }}</span>
+            <span class="text-danger text-uppercase">{{ error }}!</span>
             {% endfor %}
 
             <p>

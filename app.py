@@ -197,6 +197,7 @@ def get_movie_info():
             entry = Entry(date=date)
             db.session.add(entry)
             db.session.commit()
+            flash("Entry logged.", "success")
             return redirect('/')
         else:
             return render_template('home.html', movie_info=movie_info, form=form)
@@ -214,6 +215,7 @@ def get_movie_info():
             entry = Entry(date=date)
             db.session.add(entry)
             db.session.commit()
+            flash("Entry logged.", "success")
             return redirect('/')
         else:
             return render_template('home.html', movie_info=movie_info, form=form)
@@ -250,15 +252,40 @@ def get_movie_info():
 
 @app.route("/add-entry", methods=["GET", "POST"])
 def add_entry():
-    """Handle adding entries."""
-    if request.method == 'POST':
-        date = request.form['date']
-        entry = Entry(date=date)
+    """Add an entry. Show form if GET."""
+
+    if not g.user:
+        flash("Must be signed in!", "danger")
+        return redirect("/")
+
+    user = g.user
+    form = LogActivityForm()
+
+    if form.validate_on_submit():
+        user_id = user.id
+        date = form.date.data
+        entry = Entry(date=date, user_id=user_id)
         db.session.add(entry)
         db.session.commit()
-        return redirect("/")
-    else:
-        return render_template("home.html")
+        flash(f"Added movie entry for {date}", "success")
+        return redirect("/add-entry")
+
+    return render_template('log-activity.html', form=form)
+
+# @app.route("/add-entry", methods=["POST"])
+# def add_entry():
+#     """Handle adding entries."""
+#     if request.method == 'POST':
+#         date = request.form['date']
+#         entry = Entry(date=date)
+#         db.session.add(entry)
+#         db.session.commit()
+#         flash("Entry logged.", "success")
+#         return redirect("/")
+#     else:
+#         return render_template("home.html")
+##############################################################################
+# Summary routes
 
 
 @app.route("/summary")
