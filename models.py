@@ -102,3 +102,13 @@ class Entry(db.Model):
 
     # def __init__(self, date):
     #     self.date = date
+
+
+def entry_summary():
+    """Show summary of all user entries."""
+
+    entries = (db.session.query(Entry.id, User.username, Movie.title,
+               Movie.release_date, Movie.runtime).join(User, Movie).all())
+
+    for id, username, title, release_date, runtime in entries:
+        print(f"{id} | {username} | {title} | {release_date} | {runtime} min")

@@ -23,3 +23,4 @@ class AddEntryForm(FlaskForm):
     """Add entry form."""
 
     date = DateField('Date Watched (YYYY-M-D)', format='%Y-%m-%d')
+    # movie_id = IntegerField('Movie ID', validators=[DataRequired()])

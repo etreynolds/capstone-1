@@ -44,7 +44,7 @@ def homepage():
         return redirect('/signup')
 
 ##############################################################################
-# User signup/login/logout
+# User signup/login/logout routes
 
 
 @app.before_request
@@ -203,31 +203,9 @@ def get_movie_info():
         print("Added to DB")
         return render_template('home.html', movie_info=movie_info, form=form)
 
-    # if form.validate_on_submit():
-    #     user_id = g.user.id
-    #     date = form.date.data
-    #     entry = Entry(date=date, user_id=user_id)
-    #     db.session.add(entry)
-    #     db.session.commit()
-    #     flash(f"Added movie entry for {date}", "success")
-    #     return redirect('/')
-    # else:
-    #     return render_template('home.html', movie_info=movie_info, form=form)
-
-        # if form.validate_on_submit():
-        #     user_id = g.user.id
-        #     date = form.date.data
-        #     entry = Entry(date=date, user_id=user_id)
-        #     db.session.add(entry)
-        #     db.session.commit()
-        #     flash(f"Added movie entry for {date}", "success")
-        #     return redirect('/')
-        # else:
-        #     return render_template('home.html', movie_info=movie_info, form=form)
-
 
 @app.route("/movie?movie=<movie_title>", methods=["POST"])
-def add_movie_date(movie_title):
+def add_movie_date():
     """Handle submitting entry with date."""
 
     form = AddEntryForm()
@@ -243,8 +221,10 @@ def add_movie_date(movie_title):
 
     else:
         return render_template('home.html')
+
 ##############################################################################
 # Entries routes
+
 # @app.route("/add-entry", methods=["GET", "POST"])
 # def add_entry():
 #     """Add an entry. Show form if GET."""
@@ -292,4 +272,14 @@ def show_user(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('summary.html', user=user)
+
+    entries = db.session.query(Entry.id, User.username, Movie.title,
+                               Entry.date, Movie.runtime).join(User, Movie).all()
+
+    print("**********************")
+    for id, username, title, watched_date, runtime in entries:
+        print(f"{id} | {username} | {title} | {watched_date} | {runtime} min")
+    print("**********************")
+
+    return render_template('summary.html', user=user, id=id, username=username, title=title,
+                           watched_date=watched_date, runtime=runtime)
