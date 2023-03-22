@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, flash, session, g, request
+from flask import Flask, redirect, render_template, flash, session, g, request, url_for
 import requests
 import pdb
 from flask_debugtoolbar import DebugToolbarExtension
@@ -239,7 +239,7 @@ def add_entry():
         db.session.add(entry)
         db.session.commit()
         flash(f"Added movie entry for {date}", "success")
-        return redirect("/")
+        return redirect(url_for('show_user', user_id=user_id))
 
     else:
         return render_template('home.html', form=form)
@@ -249,18 +249,18 @@ def add_entry():
 # Summary routes
 
 
-@ app.route("/summary")
-def show_user_summary():
-    """Show summary of user's entries."""
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
+# @ app.route("/summary")
+# def show_user_summary():
+#     """Show summary of user's entries."""
+#     if not g.user:
+#         flash("Access unauthorized.", "danger")
+#         return redirect("/")
 
-    # user = User.query.get_or_404(user_id)
+#     # user = User.query.get_or_404(user_id)
 
-    users = User.query.all()
+#     users = User.query.all()
 
-    return render_template('summary.html', users=users)
+#     return render_template('summary.html', users=users)
 
 
 @ app.route("/user/<int:user_id>/summary")
@@ -271,6 +271,10 @@ def show_user(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
+
+    if user != g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
 
     entries = db.session.query(Entry.id, User.username, Movie.title,
                                Entry.date, Movie.runtime).join(User, Movie).all()
