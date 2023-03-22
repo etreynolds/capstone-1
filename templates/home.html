@@ -22,7 +22,11 @@
             <h5>Release Date: {{movie_info['release_date']|datetimeformat('%B %d, %Y')}}</h5>
             <h5>User Score: {{movie_info['user_score']}}</h5>
 
-            <form action="/movie?movie=<movie_title>" method="POST">
+            <form action="/add-entry" method="POST">
+                {{ form.hidden_tag() and form.csrf_token }}
+
+                <input type="hidden" name="movie_id" value={{ movie_info['id'] }}>
+
                 {% for field in form if field.widget.input_type != 'hidden' %}
 
                 <h6>

@@ -1,5 +1,6 @@
 from flask import Flask, redirect, render_template, flash, session, g, request
 import requests
+import pdb
 from flask_debugtoolbar import DebugToolbarExtension
 from api import API_SECRET_KEY
 from sqlalchemy.exc import IntegrityError
@@ -136,7 +137,7 @@ def logout():
 # API routes
 
 
-@app.route("/movie", methods=["GET", "POST"])
+@app.route("/movie", methods=["GET"])
 def get_movie_info():
     """Return page about movie."""
 
@@ -190,8 +191,6 @@ def get_movie_info():
         Movie.id == id)).scalar()
 
     if exists:
-        print("******************")
-        print("Already in DB")
         return render_template('home.html', movie_info=movie_info, form=form)
 
     else:
@@ -199,58 +198,58 @@ def get_movie_info():
                             runtime, poster_path, user_score)
         db.session.add(movie_to_db)
         db.session.commit()
-        print("********************")
-        print("Added to DB")
         return render_template('home.html', movie_info=movie_info, form=form)
 
 
-@app.route("/movie?movie=<movie_title>", methods=["POST"])
-def add_movie_date():
-    """Handle submitting entry with date."""
+##############################################################################
+# Entries routes
+
+# @app.route("/movie?movie=<movie_title>", methods=["POST"])
+# def add_watched_date():
+#     """Handle submitting entry with date."""
+
+#     form = AddEntryForm()
+
+#     if form.validate_on_submit():
+#         user_id = g.user.id
+#         date = form.date.data
+#         entry = Entry(date=date, user_id=user_id)
+#         db.session.add(entry)
+#         db.session.commit()
+#         flash(f"Added movie entry for {date}", "success")
+#         return redirect('/')
+
+#     else:
+#         return render_template('home.html')
+
+@ app.route("/add-entry", methods=["GET", "POST"])
+def add_entry():
+    """Add an entry. Show form if GET."""
+    if not g.user:
+        flash("Must be signed in!", "danger")
+        return redirect("/")
 
     form = AddEntryForm()
 
     if form.validate_on_submit():
         user_id = g.user.id
         date = form.date.data
-        entry = Entry(date=date, user_id=user_id)
+        movie_id = form.movie_id.data
+        entry = Entry(date=date, user_id=user_id, movie_id=movie_id)
         db.session.add(entry)
         db.session.commit()
         flash(f"Added movie entry for {date}", "success")
-        return redirect('/')
+        return redirect("/")
 
     else:
-        return render_template('home.html')
-
-##############################################################################
-# Entries routes
-
-# @app.route("/add-entry", methods=["GET", "POST"])
-# def add_entry():
-#     """Add an entry. Show form if GET."""
-#     if not g.user:
-#         flash("Must be signed in!", "danger")
-#         return redirect("/")
-
-#     user = g.user
-#     form = AddEntryForm()
-#     if form.validate_on_submit():
-#         user_id = user.id
-#         date = form.date.data
-#         movie_id = form.movie_id.data
-#         entry = Entry(date=date, user_id=user_id, movie_id=movie_id)
-#         db.session.add(entry)
-#         db.session.commit()
-#         flash(f"Added movie entry for {date}", "success")
-#         return redirect("/add-entry")
-#     return render_template('add-entry.html', form=form)
+        return render_template('home.html', form=form)
 
 
 ##############################################################################
 # Summary routes
 
 
-@app.route("/summary")
+@ app.route("/summary")
 def show_user_summary():
     """Show summary of user's entries."""
     if not g.user:
@@ -264,7 +263,7 @@ def show_user_summary():
     return render_template('summary.html', users=users)
 
 
-@app.route("/user/<int:user_id>/summary")
+@ app.route("/user/<int:user_id>/summary")
 def show_user(user_id):
     """Show details about user."""
     if not g.user:

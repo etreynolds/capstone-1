@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, DateField, SelectField, BooleanField, IntegerField
+from wtforms import StringField, PasswordField, DateField, HiddenField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, NumberRange
 
 
@@ -23,4 +23,4 @@ class AddEntryForm(FlaskForm):
     """Add entry form."""
 
     date = DateField('Date Watched (YYYY-M-D)', format='%Y-%m-%d')
-    # movie_id = IntegerField('Movie ID', validators=[DataRequired()])
+    movie_id = HiddenField('Movie ID')
