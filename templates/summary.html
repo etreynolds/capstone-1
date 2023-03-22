@@ -19,13 +19,15 @@
                     <th scope="col">Watched Date</th>
                     <th scope="col">Runtime</th>
                 </tr>
+                {% for entry in entries %}
                 <tr>
-                    <td>{{id}}</td>
-                    <td>{{username}}</td>
-                    <td>{{title}}</td>
-                    <td>{{watched_date}}</td>
-                    <td>{{runtime}} minutes</td>
+                    <td>{{ entry.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ entry.title }}</td>
+                    <td>{{ entry.date }}</td>
+                    <td>{{ entry.runtime }} minutes</td>
                 </tr>
+                {% endfor %}
             </thead>
         </table>
     </div>

@@ -239,7 +239,7 @@ def add_entry():
         db.session.add(entry)
         db.session.commit()
         flash(f"Added movie entry for {date}", "success")
-        return redirect(url_for('show_user', user_id=user_id))
+        return redirect(url_for('show_user_summary', user_id=user_id))
 
     else:
         return render_template('home.html', form=form)
@@ -248,23 +248,8 @@ def add_entry():
 ##############################################################################
 # Summary routes
 
-
-# @ app.route("/summary")
-# def show_user_summary():
-#     """Show summary of user's entries."""
-#     if not g.user:
-#         flash("Access unauthorized.", "danger")
-#         return redirect("/")
-
-#     # user = User.query.get_or_404(user_id)
-
-#     users = User.query.all()
-
-#     return render_template('summary.html', users=users)
-
-
 @ app.route("/user/<int:user_id>/summary")
-def show_user(user_id):
+def show_user_summary(user_id):
     """Show details about user."""
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -276,13 +261,18 @@ def show_user(user_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    entries = db.session.query(Entry.id, User.username, Movie.title,
-                               Entry.date, Movie.runtime).join(User, Movie).all()
+    entries = (db.session.query(Entry.id, User.username, Movie.title,
+                                Entry.date, Movie.runtime)
+               .order_by(Entry.date.desc())
+               .join(User, Movie)
+               .all())
 
     print("**********************")
     for id, username, title, watched_date, runtime in entries:
         print(f"{id} | {username} | {title} | {watched_date} | {runtime} min")
     print("**********************")
 
-    return render_template('summary.html', user=user, id=id, username=username, title=title,
-                           watched_date=watched_date, runtime=runtime)
+    return render_template('summary.html', user=user, entries=entries)
+
+# user=user, id=id, username=username, title=title,
+#                            watched_date=watched_date, runtime=runtime
