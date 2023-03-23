@@ -261,14 +261,14 @@ def show_user_summary(user_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    entries = (db.session.query(Entry.id, User.username, Movie.title,
-                                Entry.date, Movie.runtime)
+    entries = (db.session.query(Entry.date, User.username, Movie.title, Movie.runtime)
                .order_by(Entry.date.desc())
+               .filter(Entry.user_id == g.user.id)
                .join(User, Movie)
                .all())
 
     print("**********************")
-    for id, username, title, watched_date, runtime in entries:
+    for username, title, watched_date, runtime in entries:
         print(f"{id} | {username} | {title} | {watched_date} | {runtime} min")
     print("**********************")
 

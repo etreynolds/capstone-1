@@ -13,18 +13,16 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
+                    <th scope="col">Watched Date</th>
                     <th scope="col">Username</th>
                     <th scope="col">Movie Title</th>
-                    <th scope="col">Watched Date</th>
                     <th scope="col">Runtime</th>
                 </tr>
                 {% for entry in entries %}
                 <tr>
-                    <td>{{ entry.id }}</td>
+                    <td>{{ entry.date }}</td>
                     <td>{{ user.username }}</td>
                     <td>{{ entry.title }}</td>
-                    <td>{{ entry.date }}</td>
                     <td>{{ entry.runtime }} minutes</td>
                 </tr>
                 {% endfor %}
