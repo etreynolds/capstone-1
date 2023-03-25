@@ -22,5 +22,5 @@ class LoginForm(FlaskForm):
 class AddEntryForm(FlaskForm):
     """Add entry form."""
 
-    date = DateField('Date Watched (YYYY-M-D)', format='%Y-%m-%d')
+    date = DateField('Date Watched (M-D-YYYY)', format='%m-%d-%Y')
     movie_id = HiddenField('Movie ID')

@@ -204,27 +204,10 @@ def get_movie_info():
 ##############################################################################
 # Entries routes
 
-# @app.route("/movie?movie=<movie_title>", methods=["POST"])
-# def add_watched_date():
-#     """Handle submitting entry with date."""
-
-#     form = AddEntryForm()
-
-#     if form.validate_on_submit():
-#         user_id = g.user.id
-#         date = form.date.data
-#         entry = Entry(date=date, user_id=user_id)
-#         db.session.add(entry)
-#         db.session.commit()
-#         flash(f"Added movie entry for {date}", "success")
-#         return redirect('/')
-
-#     else:
-#         return render_template('home.html')
-
-@ app.route("/add-entry", methods=["GET", "POST"])
+@app.route("/add-entry", methods=["GET", "POST"])
 def add_entry():
     """Add an entry. Show form if GET."""
+
     if not g.user:
         flash("Must be signed in!", "danger")
         return redirect("/")
@@ -248,9 +231,10 @@ def add_entry():
 ##############################################################################
 # Summary routes
 
-@ app.route("/user/<int:user_id>/summary")
+@app.route("/user/<int:user_id>/summary")
 def show_user_summary(user_id):
     """Show details about user."""
+
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -261,18 +245,24 @@ def show_user_summary(user_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    entries = (db.session.query(Entry.date, User.username, Movie.title, Movie.runtime)
+    entries = (db.session.query(Entry.id, Entry.date, Movie.title, Movie.runtime, Movie.genre, Movie.user_score)
                .order_by(Entry.date.desc())
                .filter(Entry.user_id == g.user.id)
-               .join(User, Movie)
+               .join(Movie)
                .all())
-
-    print("**********************")
-    for username, title, watched_date, runtime in entries:
-        print(f"{id} | {username} | {title} | {watched_date} | {runtime} min")
-    print("**********************")
 
     return render_template('summary.html', user=user, entries=entries)
 
-# user=user, id=id, username=username, title=title,
-#                            watched_date=watched_date, runtime=runtime
+
+@app.route("/summary/<int:entry_id>/delete", methods=["POST"])
+def delete_entry(entry_id):
+    """Delete entry when X clicked on summary page."""
+
+    entry = Entry.query.get_or_404(entry_id)
+    db.session.delete(entry)
+    db.session.commit()
+    return redirect(f"/user/{g.user.id}/summary")
+
+
+##############################################################################
+# Test routes
