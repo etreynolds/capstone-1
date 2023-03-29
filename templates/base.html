@@ -9,12 +9,11 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-
-    <!-- <link rel="stylesheet" href="/static/app.css"> -->
+    <!-- <link rel="stylesheet" href="/static/bootstrap.min.css"> -->
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <div class="navbar-header">
                 <a href="/" class="navbar-brand">
@@ -30,11 +29,8 @@
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav">
                     <li class="nav-item active">
-                        <a class="nav-link" href="/">Movie Search</a>
+                        <a class="nav-link active" href="/">Movie Search</a>
                     </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="/add-entry">Add Entry</a>
-                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link" href="/user/{{ g.user.id }}/summary">Summary</a>
                     </li>
@@ -43,7 +39,7 @@
 
             <ul class="nav navbar-nav navbar-right">
                 {% if not g.user %}
-                <li class="nav-item"><a class="nav-link" href="/signup">Sign up</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/signup">Sign up</a></li>
                 <li class="nav-item"><a class="nav-link" href="/login">Log in</a></li>
                 {% else %}
                 <li>

@@ -263,7 +263,7 @@ def show_user_summary(user_id):
 
     formatted_watch_time = convert(total_watch_time)
 
-    return render_template('summary.php', user=user, entries=entries, movie_count=movie_count, formatted_watch_time=formatted_watch_time)
+    return render_template('summary.html', user=user, entries=entries, movie_count=movie_count, formatted_watch_time=formatted_watch_time)
 
 
 @ app.route("/summary/<int:entry_id>/delete", methods=["POST"])
