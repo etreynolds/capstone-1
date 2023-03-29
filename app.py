@@ -4,7 +4,7 @@ import pdb
 from flask_debugtoolbar import DebugToolbarExtension
 from api import API_SECRET_KEY
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.sql import exists
+from sqlalchemy.sql import exists, func
 from models import db, connect_db, User, Entry, Movie
 from forms import UserAddForm, LoginForm, AddEntryForm
 from datetime import datetime
@@ -27,6 +27,17 @@ connect_db(app)
 db.create_all()
 
 debug = DebugToolbarExtension(app)
+
+
+# Function to convert runtime minutes into 'hour minutes'
+# example: 129 minutes will show as '2h 9m'
+def convert(min):
+    min = min % (24 * 1440)
+    hour = min // 1440
+    min %= 1440
+    hour = min // 60
+    min %= 60
+    return (f"{hour}h {min}m")
 
 
 @app.template_filter('datetimeformat')
@@ -164,16 +175,6 @@ def get_movie_info():
     runtime = data2['runtime']
     genre = data2['genres'][0]['name']
 
-    # Function to convert runtime minutes into 'hour minutes'
-    # example: 129 minutes will show as '2h 9m'
-    def convert(min):
-        min = min % (24 * 1440)
-        hour = min // 1440
-        min %= 1440
-        hour = min // 60
-        min %= 60
-        return (f"{hour}h {min}m")
-
     formatted_runtime = convert(runtime)
 
     movie_info = {"title": title,
@@ -251,10 +252,21 @@ def show_user_summary(user_id):
                .join(Movie)
                .all())
 
-    return render_template('summary.html', user=user, entries=entries)
+    movie_count = (db.session.query(Entry.user_id)
+                   .filter(Entry.user_id == g.user.id)
+                   .count())
+
+    total_watch_time = (db.session.query(db.func.sum(Movie.runtime))
+                        .join(Entry, Entry.movie_id == Movie.id)
+                        .filter(Entry.user_id == g.user.id)
+                        .group_by(Entry.user_id).scalar())
+
+    formatted_watch_time = convert(total_watch_time)
+
+    return render_template('summary.php', user=user, entries=entries, movie_count=movie_count, formatted_watch_time=formatted_watch_time)
 
 
-@app.route("/summary/<int:entry_id>/delete", methods=["POST"])
+@ app.route("/summary/<int:entry_id>/delete", methods=["POST"])
 def delete_entry(entry_id):
     """Delete entry when X clicked on summary page."""
 
@@ -267,7 +279,7 @@ def delete_entry(entry_id):
 ##############################################################################
 # Error routes
 
-@app.errorhandler(404)
+@ app.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
 

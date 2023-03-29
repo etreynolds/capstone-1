@@ -8,6 +8,8 @@
         <h5>Total Stats</h5>
     </div>
 
+        <h5>Movies Watched: {{ movie_count }}</h5>
+        <h5>Total Watch Time: {{ formatted_watch_time }}</h5>
     <hr>
     <div>
         <table class="table">
@@ -40,8 +42,5 @@
         </table>
     </div>
 </div>
-
-
-
 
 {% endblock %}
