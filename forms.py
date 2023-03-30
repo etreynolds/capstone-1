@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, DateField, HiddenField, BooleanField, IntegerField
+from wtforms import StringField, PasswordField, HiddenField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, NumberRange
+from wtforms.fields.html5 import DateField
 
 
 class UserAddForm(FlaskForm):
@@ -22,5 +23,6 @@ class LoginForm(FlaskForm):
 class AddEntryForm(FlaskForm):
     """Add entry form."""
 
-    date = DateField('Date Watched (M-D-YYYY)', format='%m-%d-%Y')
+    date = DateField('Date Watched:', format='%Y-%m-%d',
+                     validators=[DataRequired()])
     movie_id = HiddenField('Movie ID')

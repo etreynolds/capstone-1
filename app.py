@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, flash, session, g, request, url_for
+from flask import Flask, redirect, render_template, flash, session, g, request, url_for, abort
 import requests
 import pdb
 from flask_debugtoolbar import DebugToolbarExtension
@@ -158,8 +158,13 @@ def get_movie_info():
                         params={'api_key': API_SECRET_KEY,
                                 'query': movie})
 
-    data1 = res1.json()
-    id = data1["results"][0]['id']
+    # if searched movie doesn't exist, show 404 page
+    try:
+        data1 = res1.json()
+        id = data1["results"][0]['id']
+    except (IndexError, KeyError):
+        abort(404)
+
     title = data1["results"][0]['title']
     release_date = datetime_obj = datetime.strptime(
         (data1["results"][0]['release_date']), '%Y-%m-%d')
@@ -266,7 +271,7 @@ def show_user_summary(user_id):
     return render_template('summary.html', user=user, entries=entries, movie_count=movie_count, formatted_watch_time=formatted_watch_time)
 
 
-@ app.route("/summary/<int:entry_id>/delete", methods=["POST"])
+@app.route("/summary/<int:entry_id>/delete", methods=["POST"])
 def delete_entry(entry_id):
     """Delete entry when X clicked on summary page."""
 
@@ -279,7 +284,7 @@ def delete_entry(entry_id):
 ##############################################################################
 # Error routes
 
-@ app.errorhandler(404)
+@app.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
 

@@ -2,23 +2,37 @@
 
 {% block content %}
 
-<div class="container">
-    <div class="row justify-content-md-center mx-5">
-        <h1 class="mt-4 text-center">What movie did you watch?</h1>
-        <form action="/movie">
-            <div class="form-group mt-4">
-                <input class="form-control" type="text" name="movie" placeholder="Search" id="search" required>
-                <button type="submit" class="btn btn-outline-primary btn-sm mt-2">Submit</button>
-            </div>
-        </form>
+<hr>
+<div class="container text-center mt-5 mb-5">
+    <h1>Welcome to Media Memoir!</h1>
+    <p class="fs-4">The place where movie lovers can keep track of the movies they watch</p>
+</div>
+
+<hr>
+<div class="container d-flex justify-content-center align-items-center">
+    <div class="row mx-5">
+        <h3 class="mt-4 text-center">What movie did you watch?</h3>
+        <div class="container d-flex justify-content-center align-items-center">
+            <form class="row mt-2" action="/movie">
+                <div class="col-auto">
+                    <input class="form-control" type="text" name="movie" placeholder="Search" id="search" required>
+                </div>
+
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-outline-primary mb-3">Submit</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
+
+
 {% if movie_info %}
 <div class="row justify-content-md-center mt-5">
-    <div class="card mb-3" style="max-width: 630px;">
+    <div class="card mb-3" style="max-width: 720px;">
         <div class="row g-0">
-            <div class="col-md-4 mt-2">
+            <div class="col-md-4 p-2">
                 <img src="{{movie_info['poster_url']}}" alt="" class="img-fluid rounded start">
             </div>
             <div class="col-md-8">
@@ -54,12 +68,6 @@
     </div>
 </div>
 {% endif %}
-
-
-
-
-
-
 <hr>
 
 {% endblock %}

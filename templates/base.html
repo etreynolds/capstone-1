@@ -12,24 +12,20 @@
     <!-- <link rel="stylesheet" href="/static/bootstrap.min.css"> -->
 </head>
 
-<body class="{% block body_class %}{% endblock %}">
-    <nav class="navbar navbar-expand-lg">
+<body class="p-3 m-0 border-0 bd-example {% block body_class %}{% endblock %}">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <div class="navbar-header">
-                <a href="/" class="navbar-brand">
-                    <img src="/static/images/logo.png" alt="logo">
-                    <span></span>
-                </a>
-            </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            <a href="/" class="navbar-brand">
+                <img src="/static/images/logo.png" alt="logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <div class="collapse navbar-collapse" id="navbarText">
-                <ul class="navbar-nav">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 me-2">
                     <li class="nav-item active">
-                        <a class="nav-link active" href="/">Movie Search</a>
+                        <a class="nav-link active" aria-current="page" href="/">Movie Search</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/user/{{ g.user.id }}/summary">Summary</a>
