@@ -157,19 +157,19 @@ def get_movie_info():
     res1 = requests.get(f"{API_BASE_URL}/search/movie",
                         params={'api_key': API_SECRET_KEY,
                                 'query': movie})
+    data1 = res1.json()["results"][0]
 
     # if searched movie doesn't exist, show 404 page
     try:
-        data1 = res1.json()
-        id = data1["results"][0]['id']
+        id = data1['id']
     except (IndexError, KeyError):
         abort(404)
 
-    title = data1["results"][0]['title']
+    title = data1['title']
     release_date = datetime_obj = datetime.strptime(
-        (data1["results"][0]['release_date']), '%Y-%m-%d')
-    user_score = data1["results"][0]['vote_average']
-    poster_path = data1["results"][0]['poster_path']
+        (data1['release_date']), '%Y-%m-%d')
+    user_score = data1['vote_average']
+    poster_path = data1['poster_path']
     poster_url = f"{API_POSTER_URL}{poster_path}"
 
     res2 = requests.get(f"{API_BASE_URL}/movie/{id}",
@@ -179,6 +179,7 @@ def get_movie_info():
     data2 = res2.json()
     runtime = data2['runtime']
     genre = data2['genres'][0]['name']
+    tagline = data2['tagline']
 
     formatted_runtime = convert(runtime)
 
@@ -188,7 +189,8 @@ def get_movie_info():
                   "release_date": release_date,
                   "genre": genre,
                   "poster_url": poster_url,
-                  "user_score": user_score}
+                  "user_score": user_score,
+                  "tagline": tagline}
 
     form = AddEntryForm()
 

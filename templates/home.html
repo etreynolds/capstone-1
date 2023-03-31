@@ -38,11 +38,14 @@
             <div class="col-md-8">
                 <div class="card-body">
                     <h3 class="card-title fw-bold fst-italic">{{movie_info['title']}}</h3>
-                    <p class="card-text">Runtime: <span class="fw-bold fs-6">{{movie_info['formatted_runtime']}}</span>
+                    <p class="card-text text-muted fst-italic">"{{movie_info['tagline']}}"</p>
+                    <p class="card-text">
+                        Runtime: <span class="fw-bold fs-6">{{movie_info['formatted_runtime']}}</span><br>
+                        Release Date: <span class="fw-bold fs-6">{{movie_info['release_date']|datetimeformat('%B %d,
+                            %Y')}}</span><br>
+                        Genre: <span class="fw-bold fs-6">{{movie_info['genre']}}</span><br>
+                        User Score: <span class="fw-bold fs-6">{{movie_info['user_score']}}</span><br>
                     </p>
-                    <p class="card-text">Release Date: <span
-                            class="fw-bold fs-6">{{movie_info['release_date']|datetimeformat('%B %d, %Y')}}</span></p>
-                    <p class="card-text">User Score: <span class="fw-bold fs-6">{{movie_info['user_score']}}</span></p>
                     <form action="/add-entry" method="POST">
                         {{ form.hidden_tag() and form.csrf_token }}
 
