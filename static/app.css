@@ -1,6 +1,18 @@
-/* body {
-    background-color: #a8dadc;
-} */
+body {
+    background-color: #ABC2C4;
+}
+
+.navbar {
+    background-color: #DBE5E6;
+}
+
+.card {
+    background-color: #E7EDEE;
+}
+
+#summary-totals {
+    background-color: #E7EDEE;
+}
 
 /* .summary-totals-text {
     font-size: 50px;

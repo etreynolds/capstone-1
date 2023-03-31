@@ -147,6 +147,19 @@ def logout():
 ##############################################################################
 # API routes
 
+def search_movie(movie):
+    res = requests.get(f"{API_BASE_URL}/search/movie",
+                       params={'api_key': API_SECRET_KEY,
+                               'query': movie})
+    return res.json()["results"][0]
+
+
+def get_movie_details(id):
+    res = requests.get(f"{API_BASE_URL}/movie/{id}",
+                       params={'api_key': API_SECRET_KEY,
+                               'movie_id': id})
+    return res.json()
+
 
 @app.route("/movie", methods=["GET"])
 def get_movie_info():
@@ -154,10 +167,7 @@ def get_movie_info():
 
     movie = request.args["movie"]
 
-    res1 = requests.get(f"{API_BASE_URL}/search/movie",
-                        params={'api_key': API_SECRET_KEY,
-                                'query': movie})
-    data1 = res1.json()["results"][0]
+    data1 = search_movie(movie)
 
     # if searched movie doesn't exist, show 404 page
     try:
@@ -172,11 +182,7 @@ def get_movie_info():
     poster_path = data1['poster_path']
     poster_url = f"{API_POSTER_URL}{poster_path}"
 
-    res2 = requests.get(f"{API_BASE_URL}/movie/{id}",
-                        params={'api_key': API_SECRET_KEY,
-                                'movie_id': id})
-
-    data2 = res2.json()
+    data2 = get_movie_details(id)
     runtime = data2['runtime']
     genre = data2['genres'][0]['name']
     tagline = data2['tagline']
