@@ -8,6 +8,7 @@ from sqlalchemy.sql import exists, func
 from models import db, connect_db, User, Entry, Movie
 from forms import UserAddForm, LoginForm, AddEntryForm
 from datetime import datetime
+import os
 
 CURR_USER_KEY = "curr_user"
 
@@ -19,7 +20,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///media_memoir'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-app.config['SECRET_KEY'] = "keepitsecret"
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'keepitsecret')
+print(app.config['SECRET_KEY'])
 
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
