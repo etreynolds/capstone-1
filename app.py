@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template, flash, session, g, request, 
 import requests
 import pdb
 from flask_debugtoolbar import DebugToolbarExtension
-from api import API_SECRET_KEY
+# from api import API_SECRET_KEY
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import exists, func
 from models import db, connect_db, User, Entry, Movie
