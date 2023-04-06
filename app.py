@@ -15,6 +15,7 @@ CURR_USER_KEY = "curr_user"
 
 API_BASE_URL = "https://api.themoviedb.org/3"
 API_POSTER_URL = "https://image.tmdb.org/t/p/w185"
+API_SECRET_KEY = "835fa91de6339d07770f2724a215357c"
 
 app = Flask(__name__)
 
