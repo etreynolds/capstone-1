@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template, flash, session, g, request, 
 import requests
 import pdb
 from flask_debugtoolbar import DebugToolbarExtension
-# from api import API_SECRET_KEY
+from api import API_SECRET_KEY
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import exists, func
 from models import db, connect_db, User, Entry, Movie
@@ -15,7 +15,6 @@ CURR_USER_KEY = "curr_user"
 
 API_BASE_URL = "https://api.themoviedb.org/3"
 API_POSTER_URL = "https://image.tmdb.org/t/p/w185"
-API_SECRET_KEY = "835fa91de6339d07770f2724a215357c"
 
 app = Flask(__name__)
 
@@ -156,7 +155,7 @@ def search_movie(movie):
     res = requests.get(f"{API_BASE_URL}/search/movie",
                        params={'api_key': API_SECRET_KEY,
                                'query': movie})
-    return res.json()["results"][0]
+    return res.json()["results"]
 
 
 def get_movie_details(id):
@@ -172,52 +171,65 @@ def get_movie_info():
 
     movie = request.args["movie"]
 
-    data1 = search_movie(movie)
+    data = search_movie(movie)
+
+    movie_list = []
 
     # if searched movie doesn't exist, show 404 page
-    try:
-        id = data1['id']
-    except (IndexError, KeyError):
-        abort(404)
+    for data1 in data[0:5]:
+        try:
+            id = data1['id']
+        except (IndexError, KeyError):
+            abort(404)
 
-    title = data1['title']
-    release_date = datetime_obj = datetime.strptime(
-        (data1['release_date']), '%Y-%m-%d')
-    user_score = data1['vote_average']
-    poster_path = data1['poster_path']
-    poster_url = f"{API_POSTER_URL}{poster_path}"
+        title = data1['title']
+        release_date = datetime_obj = datetime.strptime(
+            (data1['release_date']), '%Y-%m-%d')
+        user_score = data1['vote_average']
+        poster_path = data1['poster_path']
+        poster_url = f"{API_POSTER_URL}{poster_path}"
 
-    data2 = get_movie_details(id)
-    runtime = data2['runtime']
-    genre = data2['genres'][0]['name']
-    tagline = data2['tagline']
+        data2 = get_movie_details(id)
+        runtime = data2['runtime']
+        if len(data2['genres']) > 0:
+            genre = data2['genres'][0]['name']
 
-    formatted_runtime = convert(runtime)
+        tagline = data2['tagline']
 
-    movie_info = {"title": title,
-                  "id": id,
-                  "formatted_runtime": formatted_runtime,
-                  "release_date": release_date,
-                  "genre": genre,
-                  "poster_url": poster_url,
-                  "user_score": user_score,
-                  "tagline": tagline}
+        formatted_runtime = convert(runtime)
+
+        movie_info = {"title": title,
+                      "id": id,
+                      "formatted_runtime": formatted_runtime,
+                      "release_date": release_date,
+                      "genre": genre,
+                      "poster_url": poster_url,
+                      "user_score": user_score,
+                      "tagline": tagline}
+
+        movie_list.append(movie_info)
+
+        # Check to see if movie exists in db. if not, add it.
+        exists = db.session.query(db.exists().where(Movie.id == id)).scalar()
+
+        if not exists:
+            movie_to_db = Movie(id, title, release_date, genre,
+                                runtime, poster_path, user_score)
+            db.session.add(movie_to_db)
+            db.session.commit()
 
     form = AddEntryForm()
 
-    # Check to see if movie exists in db. if not, add it.
-    exists = db.session.query(db.exists().where(
-        Movie.id == id)).scalar()
+    # if exists:
+    #     return render_template('home.html', movie_info=movie_info, form=form)
 
-    if exists:
-        return render_template('home.html', movie_info=movie_info, form=form)
+    # else:
+    #     movie_to_db = Movie(id, title, release_date, genre,
+    #                         runtime, poster_path, user_score)
+    #     db.session.add(movie_to_db)
+    #     db.session.commit()
 
-    else:
-        movie_to_db = Movie(id, title, release_date, genre,
-                            runtime, poster_path, user_score)
-        db.session.add(movie_to_db)
-        db.session.commit()
-        return render_template('home.html', movie_info=movie_info, form=form)
+    return render_template('home.html', movie_list=movie_list, form=form)
 
 
 ##############################################################################
