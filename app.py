@@ -9,6 +9,7 @@ from models import db, connect_db, User, Entry, Movie
 from forms import UserAddForm, LoginForm, AddEntryForm
 from datetime import datetime
 import os
+from collections.abc import Container, Iterable, MutableSet
 
 CURR_USER_KEY = "curr_user"
 
