@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template, flash, session, g, request, 
 import requests
 import pdb
 from flask_debugtoolbar import DebugToolbarExtension
-from api import API_SECRET_KEY
+# from api import API_SECRET_KEY
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import exists, func
 from models import db, connect_db, User, Entry, Movie
@@ -15,6 +15,7 @@ CURR_USER_KEY = "curr_user"
 
 API_BASE_URL = "https://api.themoviedb.org/3"
 API_POSTER_URL = "https://image.tmdb.org/t/p/w185"
+API_SECRET_KEY = "835fa91de6339d07770f2724a215357c"
 
 app = Flask(__name__)
 
