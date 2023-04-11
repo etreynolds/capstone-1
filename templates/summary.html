@@ -30,7 +30,7 @@
                         <th scope="col">Movie Title</th>
                         <th scope="col">Runtime</th>
                         <th scope="col">Genre</th>
-                        <th scope="col">TMDB Score</th>
+                        <th scope="col">Rating</th>
                         <th scope="col"></th>
                     </tr>
                     {% for entry in entries %}
@@ -39,7 +39,7 @@
                         <td>{{ entry.title }}</td>
                         <td>{{ entry.runtime }} minutes</td>
                         <td>{{ entry.genre }}</td>
-                        <td>{{ entry.user_score }}</td>
+                        <td>{{ entry.rating }}</td>
                         <td>
                             <form action="/summary/{{ entry.id }}/delete" method="POST">
                                 <input type="submit" value="Remove" class="btn btn-outline-danger"

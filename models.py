@@ -96,6 +96,7 @@ class Entry(db.Model):
         'users.id'), nullable=False)
     movie_id = db.Column(db.Integer, db.ForeignKey('movies.id'))
     date = db.Column(db.Date, nullable=False)
+    rating = db.Column(db.Integer)
 
     users = db.relationship('User')
     movies = db.relationship('Movie')

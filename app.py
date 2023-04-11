@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template, flash, session, g, request, 
 import requests
 import pdb
 from flask_debugtoolbar import DebugToolbarExtension
-# from api import API_SECRET_KEY
+from api import API_SECRET_KEY
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import exists, func
 from models import db, connect_db, User, Entry, Movie
@@ -15,7 +15,6 @@ CURR_USER_KEY = "curr_user"
 
 API_BASE_URL = "https://api.themoviedb.org/3"
 API_POSTER_URL = "https://image.tmdb.org/t/p/w185"
-API_SECRET_KEY = "835fa91de6339d07770f2724a215357c"
 
 app = Flask(__name__)
 
@@ -53,6 +52,8 @@ def datetimeformat(value, format='%B'):
 @app.route("/")
 def homepage():
     """Homepage."""
+
+    session['count'] = session.get('count', 0) + 1
 
     if g.user:
         return render_template('home.html')
@@ -250,7 +251,9 @@ def add_entry():
         user_id = g.user.id
         date = form.date.data
         movie_id = form.movie_id.data
-        entry = Entry(date=date, user_id=user_id, movie_id=movie_id)
+        rating = request.form.get('rating')
+        entry = Entry(date=date, user_id=user_id,
+                      movie_id=movie_id, rating=rating)
         db.session.add(entry)
         db.session.commit()
         flash(f"Added movie entry for {date}", "success")
@@ -277,7 +280,7 @@ def show_user_summary(user_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    entries = (db.session.query(Entry.id, Entry.date, Movie.title, Movie.runtime, Movie.genre, Movie.user_score)
+    entries = (db.session.query(Entry.id, Entry.date, Entry.rating, Movie.title, Movie.runtime, Movie.genre, Movie.user_score)
                .order_by(Entry.date.desc())
                .filter(Entry.user_id == g.user.id)
                .join(Movie)
