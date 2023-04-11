@@ -8,7 +8,7 @@ Check out [Media Memoir](https://media-memoir.herokuapp.com/)!
 
 ### Movie Search
 
-Users can quickly search for any movie and a cards will appear showing the top 5 results. Information included for each movie is **runtime**, **release date**, **genre(s)**, and **TMDB user score**.
+Users can quickly search for any movie and cards will appear showing the top 5 results. Information included for each movie is **runtime**, **release date**, **genre(s)**, and **TMDB user score**.
 
 ### Watched Movie
 
@@ -17,6 +17,10 @@ Registered users will be able to log a movie they've watched by searching for a 
 ### Summary
 
 Users can visit the **Summary** page to see a quick snapshot of all movies they've marked as *watched*.
+
+## User Flow
+
+![User Flow](/proposal/user-flow.png "User Flow")
 
 ## API
 
@@ -28,4 +32,4 @@ TMDB API provides a wealth of information and data points on movies that are uti
 
 ## Tech Stack
 
-HTML, CSS, JavaScript, Jinja, Python, Flask, PostgreSQL SQLAlchemy
+HTML, CSS, JavaScript, Jinja, Python, Flask, PostgreSQL, SQLAlchemy
