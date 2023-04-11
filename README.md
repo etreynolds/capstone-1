@@ -25,3 +25,7 @@ Users can visit the **Summary** page to see a quick snapshot of all movies they'
 </a>
 
 TMDB API provides a wealth of information and data points on movies that are utilized.
+
+## Tech Stack
+
+HTML, CSS, JavaScript, Jinja, Python, Flask, PostgreSQL SQLAlchemy
