@@ -22,6 +22,12 @@ Users can visit the **Summary** page to see a quick snapshot of all movies they'
 
 ![User Flow](/proposal/user-flow.png "User Flow")
 
+## Database
+
+
+
+![DB Schema](/proposal/db-schema.png "DB Schema")
+
 ## API
 
 <a href="https://www.themoviedb.org/documentation/api">
